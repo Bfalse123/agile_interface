@@ -33,4 +33,24 @@ class Data(ttk.Treeview):
 		scroll_X.pack(side="bottom", fill="x")
 		self.stored_dataframe = pd.DataFrame()
 	
+
+	def set_datatable(self, dataframe):
+		self.stored_dataframe = dataframe
+		self._draw_table(dataframe)
+	
+
+	def _draw_table(self, dataframe):
+		self.delete(*self.get_children())
+		columns = list(dataframe.columns)
+		
+		self.__setitem__("column", columns)
+		self.__setitem__("show", "headings")
+		for col in columns:
+			self.heading(col, text=col)
+			
+		df_rows = dataframe.to_numpy().tolist()
+		for row in df_rows:
+			self.insert("", "end", values=row)
+	
+
 	
