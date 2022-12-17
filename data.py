@@ -6,6 +6,8 @@ from pymorphy2 import MorphAnalyzer #Morphological analyzer for the Russian lang
 from sklearn.feature_extraction.text import TfidfVectorizer #Machine learning library
 import pandas as pd
 
+from tkinter import ttk
+import tkinter as tk
 
 nltk.download('stopwords') #downloading stopwords list (words with little meaning)
 stopwords_ru = stopwords.words('russian')
@@ -16,7 +18,19 @@ tfidf = TfidfVectorizer() #Object of class TfidfVectorizer to convert text to wo
 df = pd.read_csv("data_tables/without_str_SHORT.csv")
 tfidf_features = tfidf.fit_transform(df['tokenz']) #Returns matrix of features
 
-class Data():
+class Data(ttk.Treeview):
+	"""
+	Representation of data class
+	"""
 	def __init__(self, parent):
-		pass
-		#self.data_table.pack()
+		super().__init__(parent)
+		scroll_Y = tk.Scrollbar(self, orient="vertical", command=self.yview)
+		scroll_X = tk.Scrollbar(self, orient="horizontal", command=self.xview)
+		self.configure(
+            yscrollcommand=scroll_Y.set,
+            xscrollcommand=scroll_X.set)
+		scroll_Y.pack(side="right", fill="y")
+		scroll_X.pack(side="bottom", fill="x")
+		self.stored_dataframe = pd.DataFrame()
+	
+	
