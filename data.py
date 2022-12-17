@@ -5,11 +5,13 @@ from nltk.corpus import stopwords #Package of nltk to read corpus files
 from pymorphy2 import MorphAnalyzer #Morphological analyzer for the Russian language
 from sklearn.feature_extraction.text import TfidfVectorizer #Machine learning library
 import pandas as pd
+from sklearn.metrics.pairwise import cosine_distances
 
 from tkinter import ttk
 import tkinter as tk
 import re
 from razdel import tokenize, sentenize
+import numpy as np
 
 nltk.download('stopwords') #downloading stopwords list (words with little meaning)
 stopwords_ru = stopwords.words('russian')
@@ -64,3 +66,14 @@ class Data(ttk.Treeview):
 				s = re.sub(r'\| |\ \)| \(| \:', '', s)
 		return s
 	
+
+	def tff(self, queary):
+		q_tokens = self.tokens(queary)
+		q_tokens = q_tokens.split()
+		q_transform = tfidf.transform(q_tokens)
+		
+		cosine_dist = cosine_distances(tfidf_features, q_transform)[:, 0]
+		indices = np.argsort(cosine_dist.flatten())[0:10]
+		df_indices = list(df['tokenz'].index[indices])
+		
+		return df.tokenz[df_indices[:]]
