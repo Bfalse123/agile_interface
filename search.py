@@ -78,19 +78,24 @@ Contains events:
 		self.files_listbox.bind("<Double-Button-1>", self.display_file) #Linking event and method: double mouse click on the file cause switch on other file
 
 		self.search = tk.Frame(parent, background="#05282b") #Frame for search field
+		self.entrybox_text = tk.StringVar() #connection with text of input field
 		self.search_entrybox = tk.Entry(self.search, textvariable=self.entrybox_text, #Creates field for user's input
 										background="#0a646e", font="Cambria 14")
 		self.title_search_entrybox = tk.Label(self.search, text="SEARCH:", #Creates title for user's input field
 											background="#05282b", justify=tk.CENTER, 
 											foreground="#ffffff", font="Cambria 14 bold")
-		self.entrybox_text = tk.StringVar() #connection with text of input field
 
 		self.title_search_entrybox.pack(side=tk.LEFT, anchor=tk.W) #Adding the title into search frame
 		self.search_entrybox.pack(fill=tk.BOTH, expand=True, padx=5, pady=8) #Addint input field into search frame
 		self.search.pack(ipady=10, fill=tk.X, side=tk.TOP) #Adding the search frame to application main frame
 		self.search_entrybox.bind("<KeyPress-Return>", self.search_table) #Linking event and method: pressing enter key cause call of search_table method 
 		self.data_table = data #implementation of Data class object
-
+		self.data_table.place(
+            rely=0.08,
+            relx=0.17,
+            relwidth=0.9,
+            relheight=0.95)
+		
 
 	def drop_inside_files_listbox(self, event): #adding dropped files into system
 		log = list()
