@@ -1,20 +1,10 @@
-import nltk
-from nltk.corpus import stopwords
-import pandas as pd
-from pymorphy2 import MorphAnalyzer
-from razdel import tokenize, sentenize
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-nltk.download('stopwords')
-stopwords_ru = stopwords.words('russian')
-morph = MorphAnalyzer()
-tfidf = TfidfVectorizer()
-df = pd.read_csv('/home/viktor/agile_project/without_str.csv')
-tfidf_features = tfidf.fit_transform(df['tokenz'])
-
-def main():
-    pass
-
+from application import Application
+from search import Search
+from data import Data
 
 if __name__ == "__main__":
-    main()
+	app = Application() #object of GUI
+	data_main_frame_widget = Data(app.main_frame) #object of widget for demonstating scv data
+	search_main_frame_widget = Search(app.main_frame, data_main_frame_widget) #object of widgets for navigating through scv data	
+	
+	app.mainloop() #infinite event loop with response to users actions
