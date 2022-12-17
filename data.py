@@ -23,7 +23,7 @@ morph = MorphAnalyzer()
 
 # Object of class TfidfVectorizer to convert text to word frequency vectors
 tfidf = TfidfVectorizer()
-df = pd.read_csv("data_tables/without_str_SHORT.csv")
+df = pd.read_csv("data_tables/without_str_short.csv")
 tfidf_features = tfidf.fit_transform(
     df['tokenz'])  # Returns matrix of features
 
@@ -35,6 +35,8 @@ class Data(ttk.Treeview):
 
     def __init__(self, parent):
         super().__init__(parent)
+
+		# create scroll objects
         scroll_Y = tk.Scrollbar(self, orient="vertical", command=self.yview)
         scroll_X = tk.Scrollbar(self, orient="horizontal", command=self.xview)
         self.configure(
@@ -42,24 +44,29 @@ class Data(ttk.Treeview):
             xscrollcommand=scroll_X.set)
         scroll_Y.pack(side="right", fill="y")
         scroll_X.pack(side="bottom", fill="x")
+
         self.stored_dataframe = pd.DataFrame()
 
     def set_datatable(self, dataframe):
+
         self.stored_dataframe = dataframe
         self._draw_table(dataframe)
-
+	
     def _draw_table(self, dataframe):
         self.delete(*self.get_children())
         columns = list(dataframe.columns)
-
+		
         self.__setitem__("column", columns)
         self.__setitem__("show", "headings")
         for col in columns:
             self.heading(col, text=col)
-
+			
         df_rows = dataframe.to_numpy().tolist()
         for row in df_rows:
             self.insert("", "end", values=row)
+		
+        return None
+	
 
     def tokens(self, entry):
         lst = list(tokenize(entry))
@@ -71,6 +78,9 @@ class Data(ttk.Treeview):
         return s
 
     def tff(self, queary):
+        """
+		Extract descriptions from file
+		"""
         q_tokens = self.tokens(queary)
         q_tokens = q_tokens.split()
         q_transform = tfidf.transform(q_tokens)
