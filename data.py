@@ -9,6 +9,7 @@ import pandas as pd
 from tkinter import ttk
 import tkinter as tk
 import re
+from razdel import tokenize, sentenize
 
 nltk.download('stopwords') #downloading stopwords list (words with little meaning)
 stopwords_ru = stopwords.words('russian')
@@ -62,6 +63,4 @@ class Data(ttk.Treeview):
 				s += (morph.normal_forms(i.text)[0] + ' ')
 				s = re.sub(r'\| |\ \)| \(| \:', '', s)
 		return s
-	
-
 	
