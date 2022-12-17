@@ -8,6 +8,7 @@ import pandas as pd
 
 from tkinter import ttk
 import tkinter as tk
+import re
 
 nltk.download('stopwords') #downloading stopwords list (words with little meaning)
 stopwords_ru = stopwords.words('russian')
@@ -51,6 +52,16 @@ class Data(ttk.Treeview):
 		df_rows = dataframe.to_numpy().tolist()
 		for row in df_rows:
 			self.insert("", "end", values=row)
+	
+
+	def tokens(self, entry):
+		lst = list(tokenize(entry))
+		s = ''
+		for i in lst:
+			if i.text and i.text not in stopwords_ru:
+				s += (morph.normal_forms(i.text)[0] + ' ')
+				s = re.sub(r'\| |\ \)| \(| \:', '', s)
+		return s
 	
 
 	
