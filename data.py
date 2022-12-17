@@ -93,3 +93,7 @@ class Data(ttk.Treeview):
 			df_rec.loc['rec_' + str(j)] = new_df.iloc[spisok_rec[j]]
 		
 		self._draw_table(df_rec)
+	
+
+	def reset_table(self):
+		self._draw_table(self.stored_dataframe)
