@@ -77,3 +77,19 @@ class Data(ttk.Treeview):
 		df_indices = list(df['tokenz'].index[indices])
 		
 		return df.tokenz[df_indices[:]]
+
+
+	def find_value(self, keys):
+		spisok_rec = self.tff(keys).index
+		new_df = self.stored_dataframe
+		df_rec = pd.DataFrame(
+			columns=new_df.columns,
+            index=[
+                'rec_' +
+                str(i) for i in range(
+                    len(spisok_rec))])
+		
+		for j in range(len(spisok_rec)):
+			df_rec.loc['rec_' + str(j)] = new_df.iloc[spisok_rec[j]]
+		
+		self._draw_table(df_rec)
