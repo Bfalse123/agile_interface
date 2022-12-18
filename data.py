@@ -50,26 +50,23 @@ Representation of data class
 
 	def set_dataframe(self, path):
 		print(f"\033[33mReading chosen .csv file...\033[0m")
-		df = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
+		dataframe = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
 		print(f"\033[32mChosen .csv file was successfully read\033[0m")
-		self.stored_dataframe = df
-		self.draw_table(df)
+		self.stored_dataframe = dataframe
+		self.draw_table(dataframe)
 	
 	def draw_table(self, dataframe):
-		self.delete(*self.get_children())
+		self.table.delete(*self.table.get_children(""))
 		columns = list(dataframe.columns)
 		
-		self.__setitem__("column", columns)
-		self.__setitem__("show", "headings")
+		self.table.__setitem__("show", "headings")
+		self.table.__setitem__("column", columns)
 		for col in columns:
-			self.heading(col, text=col)
-			
-		df_rows = dataframe.to_numpy().tolist()
-		for row in df_rows:
-			self.insert("", "end", values=row)
-		
-		return None
-	
+			self.table.heading(col, text=col)
+
+		dataframe_rows = dataframe.to_numpy().tolist()
+		for row in dataframe_rows:
+			self.table.insert("", "end", values=row)
 
 	def tokens(self, entry):
 		lst = list(tokenize(entry))
