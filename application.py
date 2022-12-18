@@ -1,6 +1,4 @@
-from search import Search
-
-#libs for GUI
+#Libraries for GUI
 import tkinter as tk #Event-driven graphics library (GUI)
 from tkinter import messagebox #Context windows
 from tkinterdnd2 import TkinterDnD #Extension of tkinter for drag and drop mechanism support

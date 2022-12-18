@@ -1,4 +1,4 @@
-#libs for GUI
+#Libraries for GUI
 import tkinter as tk #Event-driven graphics library (GUI)
 from tkinter import messagebox #Context windows
 from tkinterdnd2 import DND_FILES #Extension of tkinter for drag and drop mechanism support
@@ -6,7 +6,7 @@ from tkinterdnd2 import DND_FILES #Extension of tkinter for drag and drop mechan
 import os #Library for searching dirs and files 
 import re #Library for regexes
 
-import pandas as pd #Pandas to read csv files
+import pandas as pd #Library added to read csv files
 
 DATA_DIR = "data_tables/" #Constant: dir for csv files
 
