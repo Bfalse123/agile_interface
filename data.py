@@ -5,7 +5,7 @@ from nltk.corpus import stopwords  #Package of nltk to read corpus files
 from pymorphy2 import MorphAnalyzer #Morphological analyzer for the Russian language
 from sklearn.feature_extraction.text import TfidfVectorizer  #Machine learning library
 from sklearn.metrics.pairwise import cosine_distances #Module for clustering metrics
-from razdel import tokenize
+from razdel import tokenize #Library to tokenize russian sentences
 import pandas as pd #Library added to read csv files
 
 #Libraries for GUI
@@ -26,26 +26,25 @@ morph = MorphAnalyzer()
 # Object of class TfidfVectorizer to convert text to word frequency vectors
 tfidf = TfidfVectorizer()
 
-df = pd.read_csv("data_tables/without_str_SHORT.csv")
-tfidf_features = tfidf.fit_transform(
-	df['tokenz'])  # Returns matrix of features
+df = pd.read_csv("data_tables/test.csv")
+tfidf_features = tfidf.fit_transform(df["tokenz"])  #Returns matrix of features
 
-
-class Data(ttk.Treeview):
+class Data():
 	"""
 Representation of data class
 	"""
 	def __init__(self, parent):
-		super().__init__(parent)
+		self.table = ttk.Treeview(parent)
 
 		# create scroll objects
-		scroll_Y = tk.Scrollbar(self, orient="vertical", command=self.yview)
-		scroll_X = tk.Scrollbar(self, orient="horizontal", command=self.xview)
-		self.configure(
-			yscrollcommand=scroll_Y.set,
-			xscrollcommand=scroll_X.set)
-		scroll_Y.pack(side="right", fill="y")
-		scroll_X.pack(side="bottom", fill="x")
+		self.scroll_Y = tk.Scrollbar(self.table, orient=tk.VERTICAL, command=self.table.yview)
+		self.scroll_X = tk.Scrollbar(self.table, orient=tk.HORIZONTAL, command=self.table.xview)
+		
+		self.table.configure(yscrollcommand=self.scroll_Y.set, xscrollcommand=self.scroll_X.set)
+		
+		self.scroll_Y.pack(side=tk.RIGHT, fill=tk.Y)
+		self.scroll_X.pack(side=tk.BOTTOM, fill=tk.X)
+		self.table.place(rely=0.08, relx=0.17, relwidth=0.9, relheight=0.95) #!!!!!!!!
 
 		self.stored_dataframe = pd.DataFrame()
 

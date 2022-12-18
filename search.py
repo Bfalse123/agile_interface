@@ -90,12 +90,6 @@ Contains events:
 		self.search.pack(ipady=10, fill=tk.X, side=tk.TOP) #Adding the search frame to application main frame
 		self.search_entrybox.bind("<KeyPress-Return>", self.search_table) #Linking event and method: pressing enter key cause call of search_table method 
 		self.data_table = data #implementation of Data class object
-		self.data_table.place(
-            rely=0.08,
-            relx=0.17,
-            relwidth=0.9,
-            relheight=0.95)
-		
 
 	def drop_inside_files_listbox(self, event): #adding dropped files into system
 		log = list()
@@ -117,7 +111,7 @@ Contains events:
 	def display_file(self, event): #method to change current file to show
 		file_name = self.files_listbox.get(self.files_listbox.curselection())
 		path = self.path_dict[file_name]
-		print(f"\033[32mFile {path} has been chosen -> reading\033[0m")
+		print(f"\033[32mFile {path} has been chosen\033[0m")
 		df = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
 		print(df)
 		self.data_table.set_datatable(dataframe=df)
