@@ -6,8 +6,6 @@ from tkinterdnd2 import DND_FILES #Extension of tkinter for drag and drop mechan
 import os #Library for searching dirs and files 
 import re #Library for regexes
 
-import pandas as pd #Library added to read csv files
-
 DATA_DIR = "data_tables/" #Constant: dir for csv files
 
 def parse_data_files():
@@ -37,7 +35,6 @@ Function to include all the csv files in the directory DATA_DIR
 		messagebox.showinfo("Data dir does not exists", "Data dir was created, you can put .scv files there")
 		return path_dict
 	print(f"\033[32mFiles from {DATA_DIR} were added:\033[0m", *path_dict)
-	print(path_dict)
 	return path_dict
 
 class Search():
@@ -112,9 +109,7 @@ Contains events:
 		file_name = self.files_listbox.get(self.files_listbox.curselection())
 		path = self.path_dict[file_name]
 		print(f"\033[32mFile {path} has been chosen\033[0m")
-		df = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
-		print(df)
-		self.data_table.set_datatable(dataframe=df)
+		self.data_table.set_dataframe(path)
 
 	def search_table(self, event): #method to search into table
 		entry = self.entrybox_text.get()

@@ -48,12 +48,14 @@ Representation of data class
 
 		self.stored_dataframe = pd.DataFrame()
 
-	def set_datatable(self, dataframe):
-
-		self.stored_dataframe = dataframe
-		self._draw_table(dataframe)
+	def set_dataframe(self, path):
+		print(f"\033[33mReading chosen .csv file...\033[0m")
+		df = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
+		print(f"\033[32mChosen .csv file was successfully read\033[0m")
+		self.stored_dataframe = df
+		self.draw_table(df)
 	
-	def _draw_table(self, dataframe):
+	def draw_table(self, dataframe):
 		self.delete(*self.get_children())
 		columns = list(dataframe.columns)
 		
@@ -105,7 +107,7 @@ Representation of data class
 		for j in range(len(spisok_rec)):
 			df_rec.loc['rec_' + str(j)] = new_df.iloc[spisok_rec[j]]
 
-		self._draw_table(df_rec)
+		self.draw_table(df_rec)
 
 	def reset_table(self):
-		self._draw_table(self.stored_dataframe)
+		self.draw_table(self.stored_dataframe)
