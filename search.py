@@ -113,5 +113,8 @@ Contains events:
 
 	def search_table(self, event): #method to search into table
 		entry = self.entrybox_text.get()
-		print(entry)
-		self.data_table.find_value(entry)
+		print(f"\033[34mThe search query \"{entry}\" was entered\033[0m")
+		if entry != "":
+			self.data_table.find_value(entry)
+		else:
+			self.data_table.reset_table()

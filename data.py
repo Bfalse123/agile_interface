@@ -15,19 +15,13 @@ from tkinter import ttk #Exension for tkinter themed widgets
 import re #Library for regexes
 import numpy as np #Library to work with arrays and matrixes
 
-
-# Downloading stopwords list (words with little meaning)
-nltk.download('stopwords')
-stopwords_ru = stopwords.words('russian')
-
-# Object of class MorphAnalyzer to determine russian words characteristics
-morph = MorphAnalyzer()
+DESCRIBING_COLUMN = "tokenz" #Constant: label of column in .scv file, which describes data
 
 # Object of class TfidfVectorizer to convert text to word frequency vectors
 tfidf = TfidfVectorizer()
 
 df = pd.read_csv("data_tables/test.csv")
-tfidf_features = tfidf.fit_transform(df["tokenz"])  #Returns matrix of features
+tfidf_features = tfidf.fit_transform(df[DESCRIBING_COLUMN]) #Returns matrix of features
 
 class Data():
 	"""
@@ -47,6 +41,13 @@ Representation of data class
 		self.table.place(rely=0.08, relx=0.17, relwidth=0.9, relheight=0.95) #!!!!!!!!
 
 		self.stored_dataframe = pd.DataFrame()
+
+		# Object of class MorphAnalyzer to determine russian words characteristics
+		self.morph = MorphAnalyzer()
+
+		# Downloading stopwords list (words with little meaning)
+		nltk.download('stopwords')
+		self.stopwords_ru = stopwords.words('russian')
 
 	def set_dataframe(self, path):
 		print(f"\033[33mReading chosen .csv file...\033[0m")
@@ -69,19 +70,21 @@ Representation of data class
 			self.table.insert("", "end", values=row)
 
 	def tokens(self, entry):
-		lst = list(tokenize(entry))
-		s = ''
-		for i in lst:
-			if i.text and i.text not in stopwords_ru:
-				s += (morph.normal_forms(i.text)[0] + ' ')
-				s = re.sub(r'\| |\ \)| \(| \:', '', s)
-		return s
+		token_list = list(tokenize(entry))
+		result_list = list()
+		for token in token_list:
+			print(token)
+			if token.text not in self.stopwords_ru:
+				string = self.morph.normal_forms(token.text)[0]
+				if string not in ")(][:\\/|":
+					result_list.append(string)
+		return " ".join(result_list)
 
-	def tff(self, queary):
+	def tff(self, query):
 		"""
 		Extract descriptions from file
 		"""
-		q_tokens = self.tokens(queary)
+		q_tokens = self.tokens(query)
 		q_tokens = q_tokens.split()
 		q_transform = tfidf.transform(q_tokens)
 
@@ -91,8 +94,8 @@ Representation of data class
 
 		return df.tokenz[df_indices[:]]
 
-	def find_value(self, keys):
-		spisok_rec = self.tff(keys).index
+	def find_value(self, query):
+		spisok_rec = self.tff(query).index
 		new_df = self.stored_dataframe
 		df_rec = pd.DataFrame(
 			columns=new_df.columns,
