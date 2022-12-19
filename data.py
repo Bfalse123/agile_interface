@@ -1,5 +1,4 @@
 #Libraries for smart search
-#!Should add annotation to each one
 import nltk  #Natural Language Toolkit - library for Natural Language Processing
 from nltk.corpus import stopwords  #Package of nltk to read corpus files
 from pymorphy2 import MorphAnalyzer #Morphological analyzer for the Russian language
