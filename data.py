@@ -12,27 +12,21 @@ import pandas as pd #Library added to read csv files
 import tkinter as tk #Event-driven graphics library (GUI)
 from tkinter import ttk #Exension for tkinter themed widgets
 
-import re #Library for regexes
 import numpy as np #Library to work with arrays and matrixes
 
 DESCRIBING_COLUMN = "tokenz" #Constant: label of column in .scv file, which describes data
-
-# Object of class TfidfVectorizer to convert text to word frequency vectors
-tfidf = TfidfVectorizer()
-
-df = pd.read_csv("data_tables/test.csv")
-tfidf_features = tfidf.fit_transform(df[DESCRIBING_COLUMN]) #Returns matrix of features
+QUERY_RESULT_LEN = 30 #Constant: number of showing elements for search query response
 
 class Data():
 	"""
-Representation of data class
+	Representation of data class
 	"""
 	def __init__(self, parent):
 		self.table = ttk.Treeview(parent)
 
 		# create scroll objects
-		self.scroll_Y = tk.Scrollbar(self.table, orient=tk.VERTICAL, command=self.table.yview)
-		self.scroll_X = tk.Scrollbar(self.table, orient=tk.HORIZONTAL, command=self.table.xview)
+		self.scroll_Y = tk.Scrollbar(parent, orient=tk.VERTICAL, command=self.table.yview)
+		self.scroll_X = tk.Scrollbar(parent, orient=tk.HORIZONTAL, command=self.table.xview)
 		
 		self.table.configure(yscrollcommand=self.scroll_Y.set, xscrollcommand=self.scroll_X.set)
 		
@@ -40,21 +34,25 @@ Representation of data class
 		self.scroll_X.pack(side=tk.BOTTOM, fill=tk.X)
 		self.table.place(rely=0.08, relx=0.17, relwidth=0.9, relheight=0.95) #!!!!!!!!
 
-		self.stored_dataframe = pd.DataFrame()
-
 		# Object of class MorphAnalyzer to determine russian words characteristics
 		self.morph = MorphAnalyzer()
+
+		# Object of class TfidfVectorizer to convert text to word frequency vectors
+		self.tfidf = TfidfVectorizer()
 
 		# Downloading stopwords list (words with little meaning)
 		nltk.download('stopwords')
 		self.stopwords_ru = stopwords.words('russian')
 
+		self.stored_dataframe = pd.DataFrame()
+		self.tfidf_features = None
+
 	def set_dataframe(self, path):
 		print(f"\033[33mReading chosen .csv file...\033[0m")
-		dataframe = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
+		self.stored_dataframe = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
 		print(f"\033[32mChosen .csv file was successfully read\033[0m")
-		self.stored_dataframe = dataframe
-		self.draw_table(dataframe)
+		self.tfidf_features = self.tfidf.fit_transform(self.stored_dataframe[DESCRIBING_COLUMN])
+		self.draw_table(self.stored_dataframe)
 	
 	def draw_table(self, dataframe):
 		self.table.delete(*self.table.get_children(""))
@@ -73,41 +71,32 @@ Representation of data class
 		token_list = list(tokenize(entry))
 		result_list = list()
 		for token in token_list:
-			print(token)
 			if token.text not in self.stopwords_ru:
 				string = self.morph.normal_forms(token.text)[0]
 				if string not in ")(][:\\/|":
 					result_list.append(string)
-		return " ".join(result_list)
+		return result_list
 
 	def tff(self, query):
-		"""
-		Extract descriptions from file
-		"""
 		q_tokens = self.tokens(query)
-		q_tokens = q_tokens.split()
-		q_transform = tfidf.transform(q_tokens)
-
-		cosine_dist = cosine_distances(tfidf_features, q_transform)[:, 0]
-		indices = np.argsort(cosine_dist.flatten())[0:10]
-		df_indices = list(df['tokenz'].index[indices])
-
-		return df.tokenz[df_indices[:]]
+		q_tokens_transform = self.tfidf.transform(q_tokens)
+		cosine_dist = cosine_distances(self.tfidf_features, q_tokens_transform)[:, 0]
+		half_len_dataframe = len(self.stored_dataframe) // 2
+		qrl = QUERY_RESULT_LEN if QUERY_RESULT_LEN < half_len_dataframe else half_len_dataframe
+		indices = np.argsort(cosine_dist)[0 : qrl]
+		return indices
 
 	def find_value(self, query):
-		spisok_rec = self.tff(query).index
-		new_df = self.stored_dataframe
-		df_rec = pd.DataFrame(
-			columns=new_df.columns,
-			index=[
-				'rec_' +
-				str(i) for i in range(
-					len(spisok_rec))])
-
-		for j in range(len(spisok_rec)):
-			df_rec.loc['rec_' + str(j)] = new_df.iloc[spisok_rec[j]]
-
-		self.draw_table(df_rec)
+		qri = self.tff(query)
+		indices = ["res_" + str(index) for index in range(len(qri))]
+		df_qr = pd.DataFrame(
+							columns=self.stored_dataframe.columns,
+							index = indices
+							)
+		for index in range(len(qri)):
+			df_qr.loc[indices[index]] = self.stored_dataframe.iloc[qri[index]]
+		self.draw_table(df_qr)
 
 	def reset_table(self):
+		print(f"\033[33mReseting the table...\033[0m")
 		self.draw_table(self.stored_dataframe)
