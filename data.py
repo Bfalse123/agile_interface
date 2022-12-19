@@ -23,17 +23,25 @@ class Data():
 	Representation of data class
 	"""
 	def __init__(self, parent):
-		self.table = ttk.Treeview(parent)
+		self.data = tk.Frame(parent, background="#deb5ff")
+		
+		self.table = ttk.Treeview(self.data)
+
+		self.file_name = tk.Label(self.data, text="",
+								background="#a5fae5", justify=tk.CENTER, 
+								foreground="#1f302c", font="Cambria 12")
 
 		# create scroll objects
-		self.scroll_Y = tk.Scrollbar(parent, orient=tk.VERTICAL, command=self.table.yview)
-		self.scroll_X = tk.Scrollbar(parent, orient=tk.HORIZONTAL, command=self.table.xview)
+		self.scroll_Y = tk.Scrollbar(self.data, orient=tk.VERTICAL, command=self.table.yview)
+		self.scroll_X = tk.Scrollbar(self.data, orient=tk.HORIZONTAL, command=self.table.xview)
 		
 		self.table.configure(yscrollcommand=self.scroll_Y.set, xscrollcommand=self.scroll_X.set)
 		
+		self.file_name.pack(side=tk.TOP, fill=tk.X)
 		self.scroll_Y.pack(side=tk.RIGHT, fill=tk.Y)
 		self.scroll_X.pack(side=tk.BOTTOM, fill=tk.X)
-		self.table.place(rely=0.08, relx=0.17, relwidth=0.9, relheight=0.95) #!!!!!!!!
+		self.table.pack(fill=tk.BOTH, expand=True, anchor=tk.NW)
+		self.data.place(rely=0.08, relx=0.17, relwidth=0.83, relheight=0.918)
 
 		# Object of class MorphAnalyzer to determine russian words characteristics
 		self.morph = MorphAnalyzer()
@@ -55,7 +63,8 @@ class Data():
 		if DESCRIBING_COLUMN not in dataframe.columns:
 			messagebox.showerror("FILE_FORMAT error", f"Chosen file does not have \"{DESCRIBING_COLUMN}\" column")
 			print(f"\033[31mFile {path} does not have column for search through: {DESCRIBING_COLUMN}\033[0m")
-			return 
+			return
+		self.file_name.config(text=path)
 		self.stored_dataframe = dataframe
 		self.tfidf_features = self.tfidf.fit_transform(self.stored_dataframe[DESCRIBING_COLUMN])
 		self.draw_table(self.stored_dataframe)
