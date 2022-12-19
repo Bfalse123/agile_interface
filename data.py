@@ -44,7 +44,7 @@ class Data():
 		nltk.download('stopwords')
 		self.stopwords_ru = stopwords.words('russian')
 
-		self.stored_dataframe = pd.DataFrame()
+		self.stored_dataframe = None
 		self.tfidf_features = None
 
 	def set_dataframe(self, path):

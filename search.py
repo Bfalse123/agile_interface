@@ -112,6 +112,10 @@ Contains events:
 		self.data_table.set_dataframe(path)
 
 	def search_table(self, event): #method to search into table
+		if self.data_table.stored_dataframe is None:
+			messagebox.showerror("SEARCH error", "Choose or drop .csv file to search in")
+			print(f"\033[31mFile to search in is not determined\033[0m")
+			return 
 		entry = self.entrybox_text.get()
 		print(f"\033[34mThe search query \"{entry}\" was entered\033[0m")
 		if entry != "":
