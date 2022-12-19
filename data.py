@@ -10,6 +10,7 @@ import pandas as pd #Library added to read csv files
 
 #Libraries for GUI
 import tkinter as tk #Event-driven graphics library (GUI)
+from tkinter import messagebox #Context windows
 from tkinter import ttk #Exension for tkinter themed widgets
 
 import numpy as np #Library to work with arrays and matrixes
@@ -49,8 +50,13 @@ class Data():
 
 	def set_dataframe(self, path):
 		print(f"\033[33mReading chosen .csv file...\033[0m")
-		self.stored_dataframe = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
+		dataframe = pd.read_csv(path, encoding='utf-8') #Uses only comma separator
 		print(f"\033[32mChosen .csv file was successfully read\033[0m")
+		if DESCRIBING_COLUMN not in dataframe.columns:
+			messagebox.showerror("FILE_FORMAT error", f"Chosen file does not have \"{DESCRIBING_COLUMN}\" column")
+			print(f"\033[31mFile {path} does not have column for search through: {DESCRIBING_COLUMN}\033[0m")
+			return 
+		self.stored_dataframe = dataframe
 		self.tfidf_features = self.tfidf.fit_transform(self.stored_dataframe[DESCRIBING_COLUMN])
 		self.draw_table(self.stored_dataframe)
 	
